@@ -1,0 +1,3 @@
+ <bean class="tr.commercewebservices.dto.HealthCheckDTO">
+        <property name="status" type="String"/>
+ </bean>

@@ -1,0 +1,75 @@
+
+import de.hybris.platform.catalog.CatalogService;
+import de.hybris.platform.catalog.CatalogVersionService;
+import de.hybris.platform.catalog.model.CatalogModel;
+import de.hybris.platform.servicelayer.tenant.TenantService;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import tr.commercewebservices.dto.HealthCheckDTO;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
+
+
+@Controller
+public class HealthCheckController extends BaseController {
+
+    @Resource
+    private BaseStoreService baseStoreService;
+
+    @Resource
+    private TenantService tenantService;
+
+    @Resource
+    private CatalogVersionService catalogVersionService;
+
+
+    @RequestMapping(value = "/base/healthcheck", method = RequestMethod.GET, produces = "application/xml")
+    public @ResponseBody
+    HealthCheckDTO healthCheck(HttpServletRequest request, HttpServletResponse response) {
+
+        response.setStatus(checkSystemHealth() ? HttpServletResponse.SC_OK : HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+
+        HealthCheckDTO healtCheck = new HealthCheckDTO();
+        healtCheck.setStatus(checkSystemHealth() ? "OK" : "NOK");
+
+
+    private boolean checkSystemHealth() {
+
+        final BaseStoreModel currentBaseStore = baseStoreService.getCurrentBaseStore();
+        boolean result = false;
+
+        if (!tenantService.getCurrentTenantId().isEmpty() && baseStoreService.getCurrentBaseStore() != null &&
+                 !CollectionUtils.isEmpty(catalogVersionService.getSessionCatalogVersions())) {
+            result = true;
+        }
+
+        return false;
+    }
+        return result;
+
+    }
+
+
+    public BaseStoreService getBaseStoreService() {
+    public void setBaseStoreService(BaseStoreService baseStoreService) {
+        this.baseStoreService = baseStoreService;
+    }
+
+    public TenantService getTenantService() {
+        return tenantService;
+    }
+
+    public void setTenantService(TenantService tenantService) {
+        this.tenantService = tenantService;
+    }
+
+
+}
